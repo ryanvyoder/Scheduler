@@ -32,6 +32,11 @@ public class Scheduler {
 	static String [] weekdays = new String[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 	public static void main(String[] args){
+		Scheduler sched = new Scheduler();
+		sched.startup();
+	}
+
+	public static void startup(){
 		pq = new MinHeap();
 
 		try{
@@ -359,7 +364,7 @@ public class Scheduler {
 		System.out.println("File found and loaded from memory.");
 	}
 
-	private static Node addAssignment(String assignment, String[] dueDate){
+	public static Node addAssignment(String assignment, String[] dueDate){
 		Calendar c = Calendar.getInstance();
 		c.set(Integer.parseInt(dueDate[2]), Integer.parseInt(dueDate[0]) - 1, Integer.parseInt(dueDate[1]));
 		Date due = c.getTime();
@@ -389,6 +394,34 @@ public class Scheduler {
 		System.out.println("Save Completed.");
 
 		pw.close();
+	}
+
+	/**
+	* GetAssignments():
+	* This method will print out all of the assignments formatted as: "#. <Assignment Name>		<day of week due>, <date due>"
+	* and then will return the list that it just printed out.
+	*
+	* Return : the string that is printed in DisplayAssignments()
+	*/
+  public static String GetAssignments(){
+		Node[] list = null;
+    String returnValue = "<html>";
+		if(pq.isEmpty()){
+			returnValue = "There are no assignments.";
+		}
+		else{
+			DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
+			int times = pq.getNumNodes();
+			list = pq.getAssignments();
+			Calendar c = Calendar.getInstance();
+			for(int i = 0; i < times; i++){
+				c.setTime(list[i].getDate());
+				int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+				returnValue = returnValue + (String.format("%s. %-40s%s, %s", i+1, list[i].getAssignment(), weekdays[dayOfWeek-1], df.format(list[i].getDate()))) + "<br/>";
+			}
+		}
+    returnValue = returnValue + "</html>";
+		return returnValue;
 	}
 
 	public static void printTree(){
